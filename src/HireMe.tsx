@@ -1,24 +1,64 @@
 import { useState } from 'react'
 import './App.css';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-
+import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
 
 const HireMe = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
+const [confirmation, setConfirmation] = useState(false);
+const [error, setError] = useState(false);
+
+const [formData, setFormData] = useState({
+  name: '',
+  replyTo: '',
+  message: '',
+});
+  
+async function sendEmail() {
+  
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  console.log(apiUrl);  // Debugging line to check the variable
+  
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/Prod/hireme`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formData.name,
+        replyTo: formData.replyTo,
+        message: formData.message
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.statusCode !== 200) {
+      setError(true);
+      throw new Error('Failed to send email');
+    }
+
+    setConfirmation(true);
+  } catch (error) {
+    setError(true);
+    console.error('Error sending email:', error);
+  }
+}
+
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    setError(false);
+    setConfirmation(false);
     e.preventDefault();
     // Handle form submission (e.g., send data to API or email service)
-    console.log('Form data submitted:', formData);
+    await sendEmail();
   };
 
   return (
@@ -26,6 +66,12 @@ const HireMe = () => {
       <Row className="justify-content-md-center">
         <Col md={6}>
           <h2>Contact Me</h2>
+          <Row className="justify-content-md-center">
+            <Col md={6}>
+            {error && <Alert variant="danger">The email did not send, try again</Alert>}
+            {confirmation && <Alert variant="success">Email sent, we'll be in touch!</Alert>}
+            </Col>
+          </Row>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
@@ -44,8 +90,8 @@ const HireMe = () => {
               <Form.Control
                 type="email"
                 placeholder="Enter your email"
-                name="email"
-                value={formData.email}
+                name="replyTo"
+                value={formData.replyTo}
                 onChange={handleChange}
                 required
               />
@@ -63,10 +109,11 @@ const HireMe = () => {
                 required
               />
             </Form.Group>
-
+            {!confirmation &&
             <Button variant="primary" type="submit" className="mt-3">
               Submit
             </Button>
+            }
           </Form>
         </Col>
       </Row>
