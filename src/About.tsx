@@ -2,7 +2,7 @@ import { Card, Col, Container, Row } from "react-bootstrap";
 
 const About = () => {
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 mb-5">
     <h2 className="text-center mb-5">About Me</h2>
       <Row className="justify-content-md-center">
         <Col md={8}>
