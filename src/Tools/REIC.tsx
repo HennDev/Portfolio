@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
 
 const REIC = () => {
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+  function handleSubmit(): void {
     throw new Error("Function not implemented.");
   }
 
@@ -82,7 +82,6 @@ const REIC = () => {
     const monthlyRentalIncome = cleanStrToNum(formData.monthlyRentalIncome);
     const otherMonthlyRentalIncome = cleanStrToNum(formData.otherMonthlyRentalIncome);
     const vacancyRate = cleanStrToNum(formData.vacancyRate);
-    const managmentRate = cleanStrToNum(formData.managmentRate);
 
     const vacancy = (monthlyRentalIncome + otherMonthlyRentalIncome) * (1-vacancyRate/100);
     return vacancy;
@@ -111,6 +110,11 @@ const REIC = () => {
   useEffect(() => {
     SetMonthly(calculateMonthlyPayment());
   }, [formData]);
+
+  useEffect(() => {
+    SetTotalMonthlyIncome(calculateMonthlyPayment());
+  }, [formData]);
+  
 
   const handleBlurMoney = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
