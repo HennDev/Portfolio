@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
-import NumberFormat from 'react-number-format';
 
 const REIC = () => {
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
