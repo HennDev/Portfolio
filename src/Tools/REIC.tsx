@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card, Col, Container, Form, Row } from "react-bootstrap";
 
 const REIC = () => {
@@ -6,7 +6,7 @@ const REIC = () => {
     throw new Error("Function not implemented.");
   }
 
-  const formatCurrency = (purchasePrice: Number) => {
+  const formatCurrency = (purchasePrice: number) => {
     if (!purchasePrice) return '';
 
     // Remove non-numeric characters except for .
@@ -56,7 +56,7 @@ const REIC = () => {
   const cleanStrToNum = (str: string) => parseFloat(str.replace(/[^\d.-]/g, ''));
 
 
-  const calculateMonthlyPayment = () => {
+  const calculateMonthlyPayment = useCallback(() => {
     const purchasePrice = cleanStrToNum(formData.purchasePrice);
     const percentDown = cleanStrToNum(formData.percentDown);
     const mortgageRate = cleanStrToNum(formData.mortgageRate);
@@ -69,23 +69,23 @@ const REIC = () => {
     const monthlyPayment = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -numberOfPayments));
   
     return monthlyPayment
-  };
+  }, [formData]);
 
-  const calculateTotalLoan = () => {
+  const calculateTotalLoan = useCallback(() => {
     const purchasePrice = cleanStrToNum(formData.purchasePrice);
     const percentDown = cleanStrToNum(formData.percentDown);
     const loanAmount = ((1-(percentDown/100)) * purchasePrice);
     return loanAmount;
-  };
-  
-  const calculateTotalMonthlyIncome = ():number => {
+  }, [formData]);
+    
+  const calculateTotalMonthlyIncome= useCallback(():number => {
     const monthlyRentalIncome = cleanStrToNum(formData.monthlyRentalIncome);
     const otherMonthlyRentalIncome = cleanStrToNum(formData.otherMonthlyRentalIncome);
     const vacancyRate = cleanStrToNum(formData.vacancyRate);
 
     const vacancy = (monthlyRentalIncome + otherMonthlyRentalIncome) * (1-vacancyRate/100);
     return vacancy;
-  };
+  }, [formData]);
   
   const [totalMortageCost, SetTotalMortageCost] = useState(calculateTotalLoan());
   const [monthlyMortageCost, SetMonthly] = useState(calculateMonthlyPayment());
@@ -100,22 +100,12 @@ const REIC = () => {
     }));
   };
 
-
-  // Calculate total mortgage cost whenever formData changes
   useEffect(() => {
     SetTotalMortageCost(calculateTotalLoan());
-  }, [formData]);
-
-  // Calculate monthly mortgage cost whenever formData changes
-  useEffect(() => {
     SetMonthly(calculateMonthlyPayment());
-  }, [formData]);
-
-  useEffect(() => {
-    SetTotalMonthlyIncome(calculateMonthlyPayment());
-  }, [formData]);
+    SetTotalMonthlyIncome(calculateTotalMonthlyIncome());
+  }, [formData, calculateTotalLoan, calculateMonthlyPayment, calculateTotalMonthlyIncome]);
   
-
   const handleBlurMoney = (event: { target: { name: any; value: any; }; }) => {
     const { name, value } = event.target;
     const formattedValue = formatCurrency(value);
