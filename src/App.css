@@ -8,14 +8,6 @@
   height: 100vh !important;
 }
 
-.navbar-nav .dropdown:hover > .dropdown-menu {
-  display: block;
-}
-
-.navbar-nav .dropdown-menu {
-  margin-top: 0;
-}
-
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -52,4 +44,33 @@
 
 .read-the-docs {
   color: #888;
+}
+
+
+/* App.css */
+
+/* Ensure cursor pointer on hover */
+.nav-link:hover,
+.dropdown-item:hover {
+  cursor: pointer;
+}
+
+/* Adjust dropdown menu to display on hover */
+.navbar-nav .nav-item:hover > .nav-link.dropdown-toggle,
+.navbar-nav .nav-item:focus-within > .nav-link.dropdown-toggle {
+  color: #fff; /* Ensure text color change on hover */
+}
+
+/* Display dropdown menu on hover */
+.navbar-nav .custom-dropdown .dropdown-menu {
+  display: none; /* Hide dropdown by default */
+}
+
+.navbar-nav .custom-dropdown:hover .dropdown-menu {
+  display: block; /* Show dropdown on hover */
+}
+
+/* Optional: Adjust dropdown menu styling */
+.navbar-nav .dropdown-menu {
+  margin-top: -1;
 }

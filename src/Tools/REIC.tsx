@@ -43,14 +43,17 @@ const REIC = () => {
 		percentDown: formatPercentage(20),
 		closingCosts: formatCurrency(2000),
 		mortgageRate: formatPercentage(7),
-		loanTerm: formatCurrency(30),
+		loanTerm: 30,
 		monthlyRentalIncome: formatCurrency(2000),
 		otherMonthlyRentalIncome: formatCurrency(100),
 		vacancyRate: formatPercentage(5),
 		managmentRate: formatPercentage(5),
 		maintenance: formatCurrency(100),
 		repairs: formatCurrency(100),
-		utilities: formatCurrency(200)
+		utilities: formatCurrency(200),
+    insurance: formatCurrency(1000),
+    propTax: formatCurrency(4000),
+    hoa: formatCurrency(500),
 	});
 
 	const cleanStrToNum = (str: string) => parseFloat(str.replace(/[^\d.-]/g, ''));
@@ -59,7 +62,7 @@ const REIC = () => {
 		const purchasePrice = cleanStrToNum(formData.purchasePrice);
 		const percentDown = cleanStrToNum(formData.percentDown);
 		const mortgageRate = cleanStrToNum(formData.mortgageRate);
-		const loanTerm = cleanStrToNum(formData.loanTerm);
+		const loanTerm = formData.loanTerm;
 
 		const loanAmount = purchasePrice - (percentDown / 100) * purchasePrice;
 		const monthlyRate = (mortgageRate / 100) / 12;
@@ -237,7 +240,7 @@ const REIC = () => {
 							<Form.Control
 								type="text"
 								placeholder=""
-								name="purchasePrice"
+								name="monthlyRentalIncome"
 								value={formData.monthlyRentalIncome}
 								onChange={handleChange}
 								onBlur={handleBlurMoney}
@@ -251,7 +254,7 @@ const REIC = () => {
 							<Form.Control
 								type="text"
 								placeholder=""
-								name="purchasePrice"
+								name="otherMonthlyRentalIncome"
 								value={formData.otherMonthlyRentalIncome}
 								onChange={handleChange}
 								onBlur={handleBlurMoney}
@@ -298,12 +301,12 @@ const REIC = () => {
 
 				<Row style={{ marginTop: '20px' }}>
 					<Col md={2} className="offset-md-2">
-						<Form.Group controlId="formManagementRate">
+						<Form.Group controlId="formManagmentRate">
 							<Form.Label>Management (%)</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder=""
-								name="percentManagementRate"
+								name="managmentRate"
 								value={formData.managmentRate}
 								onChange={handleChange}
 								onBlur={handleBlurPercentage}
@@ -358,11 +361,67 @@ const REIC = () => {
 		);
 	};
 
+  const renderAnnualExpenses = (): JSX.Element => {
+		return (
+			<>
+				<Row style={{ marginTop: '40px', textAlign: 'center' }}>
+					<Col>
+						<h3>Annual Expenses</h3>
+					</Col>
+				</Row>
+
+				<Row style={{ marginTop: '20px' }}>
+					<Col md={2} className="offset-md-3">
+						<Form.Group controlId="formInsurance">
+							<Form.Label>Insurance</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder=""
+								name="insurance"
+								value={formData.insurance}
+								onChange={handleChange}
+								onBlur={handleBlurPercentage}
+								required
+							/>
+						</Form.Group>
+					</Col>
+					<Col md={2}>
+						<Form.Group controlId="formPropTax">
+							<Form.Label>Property Tax</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder=""
+								name="propTax"
+								value={formData.propTax}
+								onChange={handleChange}
+								onBlur={handleBlurMoney}
+								prefix={'$'}
+								required                  />
+						</Form.Group>
+					</Col>
+					<Col md={2}>
+						<Form.Group controlId="formHOA">
+							<Form.Label>HOA</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder=""
+								name="hoa"
+								value={formData.hoa}
+								onChange={handleChange}
+								onBlur={handleBlurMoney}
+								prefix={'$'}
+								required                  />
+						</Form.Group>
+					</Col>
+				</Row>
+			</>
+		);
+	};
 	return (
 		<Container className="mt-5 mb-5">
 			<h2 className="text-center mb-5">Rental Property Calculator</h2>
 			<Row className="justify-content-md-center">
-				<Col md={12}>
+				<Col md={10}>
 					<Card>
 						<Card.Header>
               This tool rovides data analysis for potential rental property investments.
@@ -385,6 +444,7 @@ const REIC = () => {
 								{renderPurchaseDetails()}
 								{renderIncomeDetails()}
 								{renderMonthlyExpenses()}
+								{renderAnnualExpenses()}
 							</Form>
 						</Card.Body>
 					</Card>
