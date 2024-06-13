@@ -51,9 +51,9 @@ const REIC = () => {
 		maintenance: formatCurrency(100),
 		repairs: formatCurrency(100),
 		utilities: formatCurrency(200),
-    insurance: formatCurrency(1000),
-    propTax: formatCurrency(4000),
-    hoa: formatCurrency(500),
+		insurance: formatCurrency(1000),
+		propTax: formatCurrency(4000),
+		hoa: formatCurrency(500),
 	});
 
 	const cleanStrToNum = (str: string) => parseFloat(str.replace(/[^\d.-]/g, ''));
@@ -361,7 +361,7 @@ const REIC = () => {
 		);
 	};
 
-  const renderAnnualExpenses = (): JSX.Element => {
+	const renderAnnualExpenses = (): JSX.Element => {
 		return (
 			<>
 				<Row style={{ marginTop: '40px', textAlign: 'center' }}>

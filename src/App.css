@@ -8,6 +8,13 @@
   height: 100vh !important;
 }
 
+html, body, #root, .App {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -73,4 +80,10 @@
 /* Optional: Adjust dropdown menu styling */
 .navbar-nav .dropdown-menu {
   margin-top: -1;
+}
+
+
+/* Flex grow to ensure the main content takes up available space */
+main.flex-grow-1 {
+  flex-grow: 1;
 }
