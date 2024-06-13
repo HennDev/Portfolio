@@ -15,6 +15,5 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "@typescript-eslint/no-explicit-any": ["off"],
-    "eslint array-bracket-newline": ["error", "always"]
   },
 }
