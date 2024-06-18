@@ -1,28 +1,27 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Card, Col, Container, Form, Row } from "react-bootstrap";
+import { Card, Col, Container, Form, Row, Table } from "react-bootstrap";
 
 const REIC = () => {
 	function handleSubmit(): void {
 		throw new Error("Function not implemented.");
 	}
 
-	const formatCurrency = (purchasePrice: number) => {
-		if (!purchasePrice) return '';
-
-		// Remove non-numeric characters except for .
-		const numericValue = purchasePrice.toString().replace(/[^0-9.]/g, '');
-
-		// Convert to number and format as currency
-		const numberValue = parseFloat(numericValue);
-		if (isNaN(numberValue)) return '';
-
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			minimumFractionDigits: 2,
-			maximumFractionDigits: 2,
-		}).format(numberValue);
-	};
+	const formatCurrency = (value: number | string) => {
+    // Convert value to a number if it's a string
+    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+  
+    // Check if numericValue is NaN or not a finite number
+    if (isNaN(numericValue) || !isFinite(numericValue)) return '';
+  
+    // Format as currency using Intl.NumberFormat
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(numericValue);
+  };
+  
 
 	const formatPercentage = (value: number) => {
 		if (!value) return '';
@@ -83,10 +82,7 @@ const REIC = () => {
 	const calculateTotalMonthlyIncome= useCallback(():number => {
 		const monthlyRentalIncome = cleanStrToNum(formData.monthlyRentalIncome);
 		const otherMonthlyRentalIncome = cleanStrToNum(formData.otherMonthlyRentalIncome);
-		const vacancyRate = cleanStrToNum(formData.vacancyRate);
-
-		const vacancy = (monthlyRentalIncome + otherMonthlyRentalIncome) * (1-vacancyRate/100);
-		return vacancy;
+		return monthlyRentalIncome + otherMonthlyRentalIncome;
 	}, [formData]);
 
 	const [totalMortageCost, SetTotalMortageCost] = useState(calculateTotalLoan());
@@ -289,6 +285,7 @@ const REIC = () => {
 			</>
 		);
 	};
+  
 
 	const renderMonthlyExpenses = (): JSX.Element => {
 		return (
@@ -417,6 +414,188 @@ const REIC = () => {
 			</>
 		);
 	};
+
+
+  const monthlyToYrly = (str: any) => cleanStrToNum(str.toString())*12;
+  const yearlyToMonthly = (str: any) => cleanStrToNum(str)/12;
+
+  
+  const renderSummary = (): JSX.Element => {
+
+  const financialData = {
+    income:{
+      rentalIncome: {
+        monthly: cleanStrToNum(formData.monthlyRentalIncome),
+        annually: monthlyToYrly(formData.monthlyRentalIncome),
+      },
+    },
+    expense:{
+        mortgage: {
+          monthly: monthlyMortageCost,
+          annually: monthlyToYrly(monthlyMortageCost)
+        },
+        managementFees: {
+          monthly: totalMonthlyIncome * (cleanStrToNum(formData.managmentRate)/100),
+          annually: totalMonthlyIncome * (cleanStrToNum(formData.managmentRate)/100) * 12
+        },
+        vacancy: {
+          monthly: totalMonthlyIncome * (cleanStrToNum(formData.vacancyRate)/100),
+          annually: totalMonthlyIncome * (cleanStrToNum(formData.vacancyRate)/100) * 12
+        },
+        insurance: {
+          monthly: yearlyToMonthly(formData.insurance),
+          annually: cleanStrToNum(formData.insurance)
+        },
+        taxes: {
+          monthly: yearlyToMonthly(formData.propTax),
+          annually: cleanStrToNum(formData.propTax)
+        },
+        repairs: {
+          monthly: cleanStrToNum(formData.repairs),
+          annually: monthlyToYrly(formData.repairs)
+        },
+        maintenance: {
+          monthly: cleanStrToNum(formData.maintenance),
+          annually: monthlyToYrly(formData.maintenance)
+        },
+        utilities: {
+          monthly: cleanStrToNum(formData.utilities),
+          annually: monthlyToYrly(formData.utilities)
+        },
+        hoa: {
+          monthly: cleanStrToNum(formData.hoa),
+          annually: monthlyToYrly(formData.hoa)
+        },
+
+      }
+    };
+
+
+
+  const sumMonthlyExpenses = () => {
+    return formatCurrency(Object.values(financialData.expense).reduce(
+      (total, expense) => total + (expense.monthly || 0),
+      0
+    ));
+  };
+
+  const sumAnnualExpenses = () => {
+    return formatCurrency(Object.values(financialData.expense).reduce(
+      (total, expense) => total + (expense.annually || 0),
+      0
+    ));
+  };
+
+		return (
+			<>
+        <Row>
+          <Col md={7}>
+            <Table striped bordered hover className="mt-4 compact-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Monthly</th>
+                    <th>Annually</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Gross Income</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.monthly)}</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Mortgage Payment</td>
+                    <td>{formatCurrency(financialData.expense.mortgage.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.mortgage.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Insurance</td>
+                    <td>{formatCurrency(financialData.expense.insurance.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.insurance.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Taxes</td>
+                    <td>{formatCurrency(financialData.expense.taxes.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.taxes.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Management Fees</td>
+                    <td>{formatCurrency(financialData.expense.managementFees.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.managementFees.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Repairs</td>
+                    <td>{formatCurrency(financialData.expense.repairs.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.repairs.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Maintenance</td>
+                    <td>{formatCurrency(financialData.expense.maintenance.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.maintenance.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Vacancy</td>
+                    <td>{formatCurrency(financialData.expense.vacancy.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.vacancy.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>HOA</td>
+                    <td>{formatCurrency(financialData.expense.hoa.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.hoa.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Utilities</td>
+                    <td>{formatCurrency(financialData.expense.utilities.monthly)}</td>
+                    <td>{formatCurrency(financialData.expense.utilities.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Income</td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>Expenses</td>
+                    <td>{sumMonthlyExpenses()}</td>
+                    <td>{sumAnnualExpenses()}</td>
+                  </tr>
+                </tbody>
+            </Table>
+          </Col>
+          <Col md={5}>
+            <Table striped bordered hover className="mt-4 compact-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Monthly</th>
+                    <th>Annually</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Income</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.monthly)}</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.annually)}</td>
+                  </tr>
+                  <tr>
+                    <td>Expenses</td>
+                    <td>{sumMonthlyExpenses()}</td>
+                    <td>{sumAnnualExpenses()}</td>
+                  </tr>
+                  <tr>
+                    <td>Cash Flow</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.monthly - cleanStrToNum(sumMonthlyExpenses()))}</td>
+                    <td>{formatCurrency(financialData.income.rentalIncome.annually - cleanStrToNum(sumAnnualExpenses()))}</td>
+                  </tr>
+                </tbody>
+                
+            </Table>
+          </Col>
+        </Row>
+			</>
+		);
+	};
+
 	return (
 		<Container className="mt-5 mb-5">
 			<h2 className="text-center mb-5">Rental Property Calculator</h2>
@@ -445,6 +624,7 @@ const REIC = () => {
 								{renderIncomeDetails()}
 								{renderMonthlyExpenses()}
 								{renderAnnualExpenses()}
+                {renderSummary()}
 							</Form>
 						</Card.Body>
 					</Card>

@@ -79,7 +79,7 @@ html, body, #root, .App {
 
 /* Optional: Adjust dropdown menu styling */
 .navbar-nav .dropdown-menu {
-  margin-top: -1;
+  margin-top: -2;
 }
 
 
