@@ -550,11 +550,6 @@ const REIC = () => {
                     <td>{formatCurrency(financialData.expense.utilities.annually)}</td>
                   </tr>
                   <tr>
-                    <td>Income</td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
                     <td>Expenses</td>
                     <td>{sumMonthlyExpenses()}</td>
                     <td>{sumAnnualExpenses()}</td>
@@ -600,7 +595,7 @@ const REIC = () => {
 		<Container className="mt-5 mb-5">
 			<h2 className="text-center mb-5">Rental Property Calculator</h2>
 			<Row className="justify-content-md-center">
-				<Col md={10}>
+				<Col sm={10}>
 					<Card>
 						<Card.Header>
               This tool rovides data analysis for potential rental property investments.
