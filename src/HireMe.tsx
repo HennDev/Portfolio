@@ -31,9 +31,7 @@ const HireMe = () => {
 				}),
 			});
 
-			const data = await response.json();
-
-			if (!response.ok || data.statusCode !== 200) {
+			if (!response.ok) {
 				setError(true);
 				throw new Error('Failed to send email');
 			}
