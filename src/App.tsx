@@ -45,7 +45,7 @@ const App: React.FC = () => {
 									<NavDropdown.Item as={Link} to="/reic">Real Estate Investment Calculator</NavDropdown.Item>
 								</NavDropdown>
 								<Nav.Link as={Link} to="/about">About</Nav.Link>
-								<Nav.Link as={Link} to="/hireme">Hire Me</Nav.Link>
+								<Nav.Link as={Link} to="/Hireme">Hire Me</Nav.Link>
 							</Nav>
 						</Navbar.Collapse>
 					</Container>
@@ -56,7 +56,7 @@ const App: React.FC = () => {
 						<Route path="/" element={<Home />} />
 						<Route path="/services" element={<Services />} />
 						<Route path="/about" element={<About />} />
-						<Route path="/hireme" element={<HireMe />} />
+						<Route path="/Hireme" element={<HireMe />} />
 						<Route path="/reic" element={<REIC />} />
 					</Routes>
 				</main>
