@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css';
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Resend } from 'resend';
+
 
 const HireMe = () => {
 	const phoneNumber = "713-594-9520";
@@ -31,7 +33,22 @@ const HireMe = () => {
 				}),
 			});
 
-			if (!response.ok) {
+			
+			/*const resend = new Resend('re_SsNjNeQ4_Q9Zu38DSV7xhfKk4DoyfedA1');
+
+			await resend.emails.send({
+				from: 'onboarding@resend.dev',
+				to: 'emailsforblackfriday@gmail.com',
+				subject: 'Hello World',
+				html: '<p>Congrats on sending your <strong>second email</strong>!</p>'
+			}).then(response => {
+				console.log('Email sent:', response);
+			  }).catch(error => {
+				console.error('Error sending email:', error);
+			  });*/
+
+			if (!response.ok)
+			{
 				setError(true);
 				throw new Error('Failed to send email');
 			}
