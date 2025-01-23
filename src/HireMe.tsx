@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import './App.css';
 import { Alert, Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { Resend } from 'resend';
-
 
 const HireMe = () => {
 	const phoneNumber = "713-594-9520";
